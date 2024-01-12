@@ -106,7 +106,7 @@
       
     var calendar = $('#calendar').fullCalendar({
         editable: true,
-        events: SITEURL + "/fullcalender",
+        events: SITEURL + "/admin/fullcalender",
         displayEventTime: true,
         editable: true,
         eventRender: function (event, element, view) {
@@ -124,7 +124,7 @@
                 var start = $.fullCalendar.formatDate(start, "Y-MM-DD");
                 var end = $.fullCalendar.formatDate(end, "Y-MM-DD");
                 $.ajax({
-                    url: SITEURL + "/fullcalenderAjax",
+                    url: SITEURL + "/admin/fullcalenderAjax",
                     data: {
                         title: title,
                         start: start,
@@ -154,7 +154,7 @@
             var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD");
     
             $.ajax({
-                url: SITEURL + '/fullcalenderAjax',
+                url: SITEURL + '/admin/fullcalenderAjax',
                 data: {
                     title: event.title,
                     start: start,
@@ -184,7 +184,7 @@
             var slot_id = $('#slot_id').val();
             
             $.ajax({
-                url: SITEURL + '/fullcalenderAjax',
+                url: SITEURL + '/admin/fullcalenderAjax',
                 data: {
                     max_people: max_people,
                     id: slot_id,
