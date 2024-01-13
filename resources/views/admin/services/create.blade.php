@@ -56,11 +56,11 @@
                         <textarea name="description" class="form-control"></textarea>
                     </div>
 
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label for="date_range">Date Range:</label>
                         <input type="text" class="form-control" name="date_range" id="date_range" autocomplete="off">
                         <div id="date_range-error" class="invalid-feedback animated fadeInDown" style="display: none;"></div>
-                    </div>
+                    </div> --}}
             
                     <button type="button" id="createServiceBtn" class="btn btn-primary">Create </button>
                     </div>
@@ -77,14 +77,13 @@
       </div>
       @endsection
       @section('js')
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" ></script>
+      
     <script>
         
         $(document).ready(function () {
-            $('#date_range').daterangepicker({
-            opens: 'left', // Adjust as needed
-            // Add any other options you want
-        });
+            // $('#date_range').daterangepicker({
+            //    opens: 'left', 
+            // });
             $('#createServiceBtn').click(function () {
                 $.ajax({
                     type: 'POST',

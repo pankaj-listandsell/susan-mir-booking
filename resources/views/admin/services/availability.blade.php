@@ -60,7 +60,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                {{-- <h5 class="modal-title" id="eventModalTitle"></h5> --}}
+                <h5 class="modal-title"> Manage </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -69,8 +69,16 @@
                 <div class="modal-body">
                         <div class="form-group">
                             <label for="maxPeopleInput">Maximum Number of People:</label>
-                            <input type="hidden" class="form-control" id="slot_id" value="1">
+                            <input type="hidden" class="form-control" id="service_id" >
+                            <input type="hidden" class="form-control" id="start_date" >
                             <input type="number" class="form-control" id="number_people" required>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label >{{__('Status')}}</label>
+                                <br>
+                                <label ><input true-value=1 false-value=0 type="checkbox" id="booking_available"> {{__('Available for booking?')}}</label>
+                            </div>
                         </div>
                         
                     
@@ -84,132 +92,128 @@
     </div>
 </div>
 
+<div id="bravo_modal_calendar" class="modal fade">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{__('Date Information')}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="row form_modal_calendar form-horizontal" novalidate onsubmit="return false">
+                   
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label >{{__('Status')}}</label>
+                            <br>
+                            <label ><input true-value=1 false-value=0 type="checkbox" v-model="form.active"> Available for booking?</label>
+                        </div>
+                    </div>
+                   
+                    <div class="col-md-6" >
+                        <div class="form-group">
+                            <label >Max People</label>
+                            <input type="number" id="max_people" class="form-control">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" @click="saveForm">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
-@section ('js')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.js"></script>
-<!-- Bootstrap JS -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+@section('css')
+    <link rel="stylesheet" href="{{asset('libs/fullcalendar-4.2.0/core/main.css')}}">
+    <link rel="stylesheet" href="{{asset('libs/fullcalendar-4.2.0/daygrid/main.css')}}">>
+@endsection    
+@section('js')
+    <script src="{{asset('libs/fullcalendar-4.2.0/core/main.js')}}"></script>
+    <script src="{{asset('libs/fullcalendar-4.2.0/interaction/main.js')}}"></script>
+    <script src="{{asset('libs/fullcalendar-4.2.0/daygrid/main.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
-    $(document).ready(function () {
-       
-    var SITEURL = "{{ url('/') }}";
-      
-    $.ajaxSetup({
-        headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-      
-    var calendar = $('#calendar').fullCalendar({
-        editable: true,
-        events: SITEURL + "/admin/fullcalender",
-        displayEventTime: true,
-        editable: true,
-        eventRender: function (event, element, view) {
-            if (event.allDay === 'true') {
-                    event.allDay = false;
-            } else {
-                    event.allDay = false;
-            }
-        },
-        selectable: true,
-        selectHelper: true,
-        select: function (start, end, allDay) {
-            var title = prompt('Event Title:');
-            if (title) {
-                var start = $.fullCalendar.formatDate(start, "Y-MM-DD");
-                var end = $.fullCalendar.formatDate(end, "Y-MM-DD");
-                $.ajax({
-                    url: SITEURL + "/admin/fullcalenderAjax",
-                    data: {
-                        title: title,
-                        start: start,
-                        end: end,
-                        type: 'add'
-                    },
-                    type: "POST",
-                    success: function (data) {
-                        displayMessage("Event Created Successfully");
-    
-                        calendar.fullCalendar('renderEvent',
-                            {
-                                id: data.id,
-                                title: title,
-                                start: start,
-                                end: end,
-                                allDay: allDay
-                            },true);
-    
-                        calendar.fullCalendar('unselect');
-                    }
-                });
-            }
-        },
-        eventDrop: function (event, delta) {
-            var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD");
-            var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD");
-    
-            $.ajax({
-                url: SITEURL + '/admin/fullcalenderAjax',
-                data: {
-                    title: event.title,
-                    start: start,
-                    end: end,
-                    id: event.id,
-                    type: 'update'
-                },
-                type: "POST",
-                success: function (response) {
-                    displayMessage("Event Updated Successfully");
+          var SITEURL = "{{ url('/') }}";
+          $.ajaxSetup({
+                headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-        },
-        eventClick: function (event) {
-             $('#slot_id').val(event.id);
-             $('#number_people').val(event.max_people);
+		var calendarEl,calendar,lastId,formModal;
+        $('#items_tab').on('show.bs.tab',function (e) {
+			calendarEl = document.getElementById('calendar');
+			lastId = $(e.target).data('id');
+            if(calendar){
+				calendar.destroy();
+            }
+			calendar = new FullCalendar.Calendar(calendarEl, {
+                buttonText:{
+                    today:  '{{ __('Today') }}',
+                },
+				plugins: [ 'dayGrid' ,'interaction'],
+				header: {},
+				selectable: true,
+				selectMirror: false,
+				allDay:false,
+				editable: false,
+				eventLimit: true,
+				defaultView: 'dayGridMonth',
+                firstDay:1,
+				events:{
+                    url:'{{route('availability.loadDates')}}',
+                    extraParams:{
+                        id:lastId,
+                    }
+                },
+                eventClick:function (info) {
+                    $('#service_id').val(lastId);
+                    var form = Object.assign({},info.event.extendedProps);
+                    var start_date = moment(info.event.start).format('YYYY-MM-DD');
+                    $('#booking_available').prop('checked', form.active == 1);
+                    $('#start_date').val(start_date);
+                    $('#number_people').val(form.max_people);
+                    $('#eventModal').modal('show');
+                },
+                eventRender: function (info) {
+                    $(info.el).find('.fc-title').html(info.event.title);
+                }
+			});
+			calendar.render();
+		});
 
-            $('#eventModalTitle').text(event.title);
-            $('#eventModal').modal('show');
-        }
-    
-    });
+        $('.event-name:first-child a').trigger('click');
 
-    $('#maxPeopleForm').submit(function (e) {
+        $('#maxPeopleForm').submit(function (e) {
             e.preventDefault();
+            var me = this;
             var max_people = $('#number_people').val();
-            var slot_id = $('#slot_id').val();
+            var service_id = $('#service_id').val();
+            var start_date = $('#start_date').val();
+            var booking_available =  $('#booking_available').prop('checked') ? 1 : 0;
             
             $.ajax({
-                url: SITEURL + '/admin/fullcalenderAjax',
+                url:'{{route('availability.store')}}',
                 data: {
                     max_people: max_people,
-                    id: slot_id,
-                    type: 'update'
+                    service_id: service_id,
+                    start_date: start_date,
+                    active: booking_available
                 },
                 type: "POST",
                 success: function (response) {
-                    displayMessage("Celender Updated Successfully");
-                    calendar.fullCalendar('rerenderEvents');
+                    if(calendar)
+                    calendar.refetchEvents();
                     $('#eventModal').modal('hide');  
-                    location.reload();
                 }
             });
         });
-     
-    });
-     
-    function displayMessage(message) {
-        toastr.success(message, 'Event');
-    } 
-
-    
-
-   
-      
+          
 </script>
 
   

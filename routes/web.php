@@ -21,9 +21,7 @@ Route::get('/', function () {
 Auth::routes();
 
 
-
-
-Route::prefix('admin')->group(function () {
+Route::group(['prefix'=>'admin','middleware'=>['auth']],function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::get('services', [ServiceController::class, 'index'])->name('services.index');
@@ -36,7 +34,8 @@ Route::prefix('admin')->group(function () {
 
     Route::get('availability', [ServiceController::class, 'availability'])->name('services.availability');
     Route::get('fullcalender', [ServiceController::class, 'indexs']);
-    Route::post('fullcalenderAjax', [ServiceController::class, 'ajax']);
+    Route::get('availability/loadDates', [ServiceController::class, 'loadDates'])->name('availability.loadDates');
+    Route::post('availability/store', [ServiceController::class, 'storeavailability'])->name('availability.store');
     
 });
 

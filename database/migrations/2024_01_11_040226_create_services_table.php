@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->decimal('price', 8, 2);
-            $table->string('slot')->nullable();
+            $table->integer('max_people')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
         });
